@@ -1,0 +1,104 @@
+/* Lógico_1: */
+
+CREATE TABLE endereco (
+    id_end int PRIMARY KEY,
+    logradouro varchar(200),
+    num int(5),
+    complemento varchar(150),
+    bairro varchar(50)
+);
+
+CREATE TABLE pagamento_usuario (
+    id_pag int,
+    valor_pag int(20),
+    capturado tinyint ,
+    cpf varchar(50),
+    telefone varchar(25),
+    Id_user int,
+    nome varchar(150),
+    fk_endereco_id_end int,
+    PRIMARY KEY (id_pag, Id_user)
+);
+
+CREATE TABLE pedidos (
+    id_ped int PRIMARY KEY,
+    valor_tot_ped int(10),
+    fk_pagamento_usuario_id_pag int,
+    fk_pagamento_usuario_Id_user int,
+    fk_carrinho_id_carrinho int
+);
+
+CREATE TABLE carrinho (
+    id_carrinho int PRIMARY KEY,
+    qntde int,
+    subtotal int(10)
+);
+
+CREATE TABLE produto (
+    id_prod int PRIMARY KEY,
+    descricao varchar(200),
+    imagem blob,
+    nome_prod varchar(50),
+    val_ent_prod int(10),
+    val_pagar int,
+    valor_prod int(10),
+    ml_prod int(3),
+    fk_carrinho_id_carrinho int
+);
+
+CREATE TABLE carrocel (
+    id_carro int PRIMARY KEY,
+    img_carro blob,
+    titulo_carro varchar(200)
+);
+
+CREATE TABLE escolhe (
+    fk_pagamento_usuario_id_pag int,
+    fk_pagamento_usuario_Id_user int,
+    fk_produto_id_prod int
+);
+
+CREATE TABLE entrega (
+    fk_endereco_id_end int,
+    fk_pedidos_id_ped int
+);
+ 
+ALTER TABLE pagamento_usuario ADD CONSTRAINT FK_pagamento_usuario_2
+    FOREIGN KEY (fk_endereco_id_end)
+    REFERENCES endereco (id_end)
+    ON DELETE RESTRICT;
+ 
+ALTER TABLE pedidos ADD CONSTRAINT FK_pedidos_2
+    FOREIGN KEY (fk_pagamento_usuario_id_pag, fk_pagamento_usuario_Id_user)
+    REFERENCES pagamento_usuario (id_pag, Id_user)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE pedidos ADD CONSTRAINT FK_pedidos_3
+    FOREIGN KEY (fk_carrinho_id_carrinho)
+    REFERENCES carrinho (id_carrinho)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE produto ADD CONSTRAINT FK_produto_2
+    FOREIGN KEY (fk_carrinho_id_carrinho)
+    REFERENCES carrinho (id_carrinho)
+    ON DELETE CASCADE;
+ 
+ALTER TABLE escolhe ADD CONSTRAINT FK_escolhe_1
+    FOREIGN KEY (fk_pagamento_usuario_id_pag, fk_pagamento_usuario_Id_user)
+    REFERENCES pagamento_usuario (id_pag, Id_user)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE escolhe ADD CONSTRAINT FK_escolhe_2
+    FOREIGN KEY (fk_produto_id_prod)
+    REFERENCES produto (id_prod)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE entrega ADD CONSTRAINT FK_entrega_1
+    FOREIGN KEY (fk_endereco_id_end)
+    REFERENCES endereco (id_end)
+    ON DELETE SET NULL;
+ 
+ALTER TABLE entrega ADD CONSTRAINT FK_entrega_2
+    FOREIGN KEY (fk_pedidos_id_ped)
+    REFERENCES pedidos (id_ped)
+    ON DELETE SET NULL;
